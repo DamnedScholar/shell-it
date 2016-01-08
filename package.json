@@ -1,7 +1,7 @@
 {
   "name": "shell-it",
   "main": "./lib/shell-it",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Replace text in editor buffer by running text through shell command",
   "activationCommands": {
     "atom-workspace": [

@@ -1,14 +1,13 @@
-# See https://atom.io/docs/latest/creating-a-package#menus for more details
 'context-menu':
   'atom-workspace': [
-    label: 'Line Count' 
+    label: 'Shell It' 
     command: 'shell-it:open'
   ]
   
 menu: [
     label: 'Packages'
     submenu: [
-      label: 'Line Count'
+      label: 'Shell It'
       command: 'shell-it:open'
     ]
 ]

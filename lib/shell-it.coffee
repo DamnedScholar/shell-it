@@ -36,6 +36,7 @@ module.exports =
       if e.which is 13
         @process input.value
         panel.destroy()
+        atom.views.getView(@editor).focus()
         return false
 
   process: (cmd) ->
