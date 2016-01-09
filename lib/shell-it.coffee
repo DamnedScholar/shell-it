@@ -8,8 +8,9 @@ module.exports =
   activate: ->
     @subs = new SubAtom
     @subs.add atom.commands.add 'atom-workspace', 'shell-it:open': => @open()
+    @subs.add atom.commands.add 'atom-workspace', 'core:confirm':  => @submit()
     @subs.add atom.commands.add 'atom-workspace', 'core:cancel':   => @close()
-      
+  
   open: ->
     if @panel then @close()
 
@@ -17,22 +18,18 @@ module.exports =
       console.log 'shell-it: Active Pane Is Not A Text Editor'
       return
       
-    editorPath = @editor.getPath()
-    for projPath in atom.project.getPaths()
-      break if editorPath[0...projPath.length] is projPath
-
     dialog = document.createElement "div"
     dialog.setAttribute 'style', 'width:100%'
     dialog.innerHTML = """
       <div style="position:relative; display:inline-block; margin-right:10px;">
-          <label  for="shell-it-selin">
-            <input id="shell-it-selin" type="checkbox" checked>
-            Selection
-          </label>
-        <br>
           <label  for="shell-it-clipin">
             <input id="shell-it-clipin" type="checkbox">
             Clipboard
+          </label>
+        <br>
+          <label  for="shell-it-selin">
+            <input id="shell-it-selin" type="checkbox" checked>
+            Selection
           </label>
       </div>
       
@@ -53,40 +50,49 @@ module.exports =
       </div>
       
       <div style="position:relative; display:inline-block; margin-left:10px;'>
-          <label  for="shell-it-selout">
-          <input id="shell-it-selout" type="checkbox" checked>
-          Selection
-          </label>
-        <br>
           <label  for="shell-it-clipout">
             <input id="shell-it-clipout" type="checkbox">
             Clipboard
           </label>
+        <br>
+          <label  for="shell-it-selout">
+          <input id="shell-it-selout" type="checkbox" checked>
+          Selection
+          </label>
       </div>
     """
     @panel = atom.workspace.addModalPanel item: dialog
-    input = document.getElementById 'shell-it-cmd'
-    input.focus()
-    input.addEventListener 'keypress', (e) =>
-      if e.which is 13
-        stdin = ''
-        if document.getElementById('shell-it-selin').checked
-          stdin += @editor.getSelectedText()
-        if document.getElementById('shell-it-clipin').checked
-          stdin += atom.clipboard.read()
-        selout  = document.getElementById('shell-it-selout' ).checked
-        clipout = document.getElementById('shell-it-clipout').checked
-        @process projPath, input.value, stdin, selout, clipout
-        @close()
-        return false
+    @input = document.getElementById 'shell-it-cmd'
+    @input.focus()
+    @newlineSub = new SubAtom
+    @newlineSub.add @input, 'keypress', (e) =>
+      if e.which is 13 then @submit(); return false
 
+  submit: ->
+    if @panel
+      editorPath = @editor.getPath()
+      for projPath in atom.project.getPaths()
+        break if editorPath[0...projPath.length] is projPath
+      stdin = ''
+      if document.getElementById('shell-it-clipin').checked
+        stdin += atom.clipboard.read()
+      if document.getElementById('shell-it-selin').checked
+        stdin += @editor.getSelectedText()
+      selout  = document.getElementById('shell-it-selout' ).checked
+      clipout = document.getElementById('shell-it-clipout').checked
+      @process projPath, @input.value, stdin, selout, clipout
+      @close()
+
+    
   process: (cwd, cmd, stdin, selout, clipout) ->
-    # console.log {cwd, cmd, stdin, selout, clipout}
     try
       stdout = exec cmd, {cwd, input: stdin, timeout: 5e3}
       stdout = stdout.toString()
     catch e
-      console.log "shell-it: Exception:", util.inspect e, depth: null
+      atom.confirm
+        message: 'Exception:'
+        detailedMessage:  e.stderr.toString()
+        buttons: Close: => @close()
       return
     if selout
       range = @editor.getSelectedBufferRange()
@@ -97,6 +103,7 @@ module.exports =
   close: ->
     if @panel
       @panel.destroy()
+      @newlineSub.dispose()
       atom.views.getView(@editor).focus()
     @panel = null
   

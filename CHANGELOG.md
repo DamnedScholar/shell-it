@@ -1,4 +1,12 @@
 
+### 0.2.0  1/8/2016
+
+- Added clipboard options
+- Working directory now set to project containing file
+- On exception stderr is shown in popup
+- Return works everywhere
+- Escape closes dialog
+
 ### 0.1.4  1/8/2016
 
 - Editor now ends up with focus
