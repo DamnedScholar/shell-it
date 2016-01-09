@@ -23,6 +23,7 @@
     "atom": ">1.0.0"
   },
   "dependencies": {
-    "sub-atom": "^1.1.0"
+    "sub-atom": "^1.1.0",
+    "vue": "^1.0.13"
   }
 }

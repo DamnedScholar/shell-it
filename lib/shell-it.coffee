@@ -16,23 +16,51 @@ module.exports =
       
     dialog = document.createElement "div"
     dialog.setAttribute 'style', 'width:100%'
-    
-    lbl = document.createElement "div"
-    lbl.setAttribute 'style', 'position:relative; float:left; margin-right:10px;' +
-                              'font-weight:bold; font-size:12px'
-    lbl.appendChild document.createTextNode 'Shell Command:'
-    dialog.appendChild lbl
-    
-    input = document.createElement 'input'
-    input.setAttribute 'style', 'width:350px'
-    input.classList.add 'native-key-bindings'
-    dialog.appendChild input
-    
+    dialog.innerHTML = """
+      <div style="position:relative; display:inline-block; margin-right:10px;">
+          <label for="shell-it-selin">
+            <input id="shell-it-selin" type="checkbox" checked>
+            Selection
+          </label>
+        <br>
+          <label for="shell-it-clipin">
+            <input id="shell-it-clipin" type="checkbox">
+            Clipboard
+          </label>
+      </div>
+      
+      <div style="position:relative; top:12px; display:inline-block; ">
+        <div style="position:relative; top:2px; display:inline-block; margin-right:10px; 
+                    font-size:14px; font-weight:bold"> 
+          =&gt 
+        </div>
+        
+        <input id="shell-it-cmd" class="native-key-bindings" 
+               placeholder="Enter shell command" 
+               style="width:240px; font-size:14px; display:inline-block">
+        
+        <div style="position:relative; margin-left:10px; display:inline-block; 
+                    font-size:14px; font-weight:bold"> 
+          =&gt
+        </div>
+      </div>
+      
+      <div style="position:relative; display:inline-block; margin-left:10px;'>
+          <label  for="shell-it-selout">
+          <input id="shell-it-selout" type="checkbox" checked>
+          Selection
+          </label>
+        <br>
+          <label  for="shell-it-clipout">
+            <input id="shell-it-clipout" type="checkbox">
+            Clipboard
+          </label>
+      </div>
+    """
     panel = atom.workspace.addModalPanel item: dialog
+    input = document.getElementById 'shell-it-cmd'
     input.focus()
-    
     input.addEventListener 'keypress', (e) =>
-      value = input.getAttribute 'value'
       if e.which is 13
         @process input.value
         panel.destroy()
