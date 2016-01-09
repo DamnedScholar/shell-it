@@ -7,29 +7,36 @@ exec    = require('child_process').execSync
 module.exports =
   activate: ->
     @subs = new SubAtom
-    @subs = atom.commands.add 'atom-workspace', 'shell-it:open': => @open()
-
+    @subs.add atom.commands.add 'atom-workspace', 'shell-it:open': => @open()
+    @subs.add atom.commands.add 'atom-workspace', 'core:cancel':   => @close()
+      
   open: ->
+    if @panel then @close()
+
     if not (@editor = atom.workspace.getActiveTextEditor())
       console.log 'shell-it: Active Pane Is Not A Text Editor'
       return
       
+    editorPath = @editor.getPath()
+    for projPath in atom.project.getPaths()
+      break if editorPath[0...projPath.length] is projPath
+
     dialog = document.createElement "div"
     dialog.setAttribute 'style', 'width:100%'
     dialog.innerHTML = """
       <div style="position:relative; display:inline-block; margin-right:10px;">
-          <label for="shell-it-selin">
+          <label  for="shell-it-selin">
             <input id="shell-it-selin" type="checkbox" checked>
             Selection
           </label>
         <br>
-          <label for="shell-it-clipin">
+          <label  for="shell-it-clipin">
             <input id="shell-it-clipin" type="checkbox">
             Clipboard
           </label>
       </div>
       
-      <div style="position:relative; top:12px; display:inline-block; ">
+      <div style="position:relative; top:-12px; display:inline-block; ">
         <div style="position:relative; top:2px; display:inline-block; margin-right:10px; 
                     font-size:14px; font-weight:bold"> 
           =&gt 
@@ -57,29 +64,42 @@ module.exports =
           </label>
       </div>
     """
-    panel = atom.workspace.addModalPanel item: dialog
+    @panel = atom.workspace.addModalPanel item: dialog
     input = document.getElementById 'shell-it-cmd'
     input.focus()
     input.addEventListener 'keypress', (e) =>
       if e.which is 13
-        @process input.value
-        panel.destroy()
-        atom.views.getView(@editor).focus()
+        stdin = ''
+        if document.getElementById('shell-it-selin').checked
+          stdin += @editor.getSelectedText()
+        if document.getElementById('shell-it-clipin').checked
+          stdin += atom.clipboard.read()
+        selout  = document.getElementById('shell-it-selout' ).checked
+        clipout = document.getElementById('shell-it-clipout').checked
+        @process projPath, input.value, stdin, selout, clipout
+        @close()
         return false
 
-  process: (cmd) ->
-    console.log "shell-it: Processing shell command:", '"' + cmd + '"'
-    range = @editor.getSelectedBufferRange()
-    text  = @editor.getSelectedText()
+  process: (cwd, cmd, stdin, selout, clipout) ->
+    # console.log {cwd, cmd, stdin, selout, clipout}
     try
-      stdout = exec cmd, input:text, timeout: 60e3
+      stdout = exec cmd, {cwd, input: stdin, timeout: 5e3}
       stdout = stdout.toString()
     catch e
       console.log "shell-it: Exception:", util.inspect e, depth: null
       return
-    # console.log 'stdout', stdout
-    @editor.setTextInBufferRange range, stdout
-    console.log "shell-it: Processing done"
+    if selout
+      range = @editor.getSelectedBufferRange()
+      @editor.setTextInBufferRange range, stdout
+    if clipout
+      atom.clipboard.write stdout
     
+  close: ->
+    if @panel
+      @panel.destroy()
+      atom.views.getView(@editor).focus()
+    @panel = null
+  
   deactivate: ->
+    @close()
     @subs.dispose()
