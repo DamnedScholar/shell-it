@@ -2,7 +2,7 @@
 
 A simple Atom package to replace text in the editor by passing it through a shell command.  It is in the vein of `%!` in VIM.
 
-![untitled screencast 14](https://cloud.githubusercontent.com/assets/811455/12188291/aa60f46e-b568-11e5-84bc-277e30f9c0bd.gif)
+![untitled screencast 15](https://cloud.githubusercontent.com/assets/811455/12214409/ddafdf94-b647-11e5-8a28-02c88d5a1446.gif)
 
 ### Usage
 
