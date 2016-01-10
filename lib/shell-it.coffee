@@ -70,9 +70,11 @@ module.exports =
 
   submit: ->
     if @panel
-      editorPath = @editor.getPath()
-      for projPath in atom.project.getPaths()
-        break if editorPath[0...projPath.length] is projPath
+      if (editorPath = @editor.getPath())
+        for projPath in atom.project.getPaths()
+          break if editorPath[0...projPath.length] is projPath
+      else
+        projPath = atom.project.getPaths()[0] ? '/'
       stdin = ''
       if document.getElementById('shell-it-clipin').checked
         stdin += atom.clipboard.read()

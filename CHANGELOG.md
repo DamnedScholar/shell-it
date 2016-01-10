@@ -1,4 +1,8 @@
 
+### 0.2.1  1/9/2016
+
+- editors with no paths default to first project
+
 ### 0.2.0  1/8/2016
 
 - Added clipboard options
