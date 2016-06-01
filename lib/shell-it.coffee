@@ -88,7 +88,7 @@ module.exports =
     
   process: (cwd, cmd, stdin, selout, clipout) ->
     try
-      stdout = exec cmd, {cwd, input: stdin, timeout: 5e3}
+      stdout = exec cmd, {cwd, input: stdin, timeout: 5e3, stdio: 'pipe'}
       stdout = stdout.toString()
     catch e
       atom.confirm
