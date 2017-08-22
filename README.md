@@ -1,6 +1,6 @@
 # shell-it package
 
-A simple Atom package to replace text in the editor by passing it through a shell command.  It is in the vein of `%!` in VIM.
+A simple Atom package to replace text in the editor by passing it through a shell command.  It is in the vein of `%!` in VIM or `shell-command-on-region` in Emacs.
 
 ![untitled screencast 15](https://cloud.githubusercontent.com/assets/811455/12214409/ddafdf94-b647-11e5-8a28-02c88d5a1446.gif)
 
