@@ -1,4 +1,16 @@
 .shell-it-view {
+  .check {
+    display: flex;
+    flex-direction: column
+  }
+  .query {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .editor {
+    flex-grow: 1;
+  }
   .checkbox {
     position: relative;
     display: inline-block;
@@ -8,6 +20,20 @@
     }
     &.right {
       margin-left: 10px;
+    }
+  }
+
+  .spacer {
+    flex-basis: 20px;
+  }
+
+  .prev-command {
+    display: flex !important;
+    flex-direction: row;
+
+    &.left {
+      width: 30px;
+      vertical-align: middle;
     }
   }
 }

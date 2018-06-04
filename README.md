@@ -6,11 +6,12 @@ A simple Atom package to replace text in the editor by passing it through a shel
 
 ### Usage
 
-- select text
-- execute `shell-it:open` (default keybinding is `shift-ctrl-alt-S`)
-- type in a shell cmd (such as `sort`).
-- hit enter
-- The command will be executed in an OS shell
+- If you want input, you first have to select or copy text. If you don't need input, the cursor merely needs to be placed inside a TextEditor.
+- Execute `shell-it:open` (default keybinding is `shift-ctrl-alt-S`).
+- Type in a shell command (such as `sort`).
+- Select which input and output streams you want.
+- Hit enter.
+- The command will be executed in an OS shell and the results will be inserted into the clipboard and/or selection.
 
 ### Stdin and Stdout
 
@@ -20,5 +21,8 @@ A simple Atom package to replace text in the editor by passing it through a shel
 
 - The working directory is set to the project containing the current editor
 
+### Changelog
+* 0.4.0 - Rewrote the entire view as an `etch` component and added a limited history function.
+
 ### License
-Copyright Mark-Hahn with the MIT license.
+This package is covered by the MIT license. The original code was written by Mark-Hahn, with updates and rewrites by DamnedScholar.
